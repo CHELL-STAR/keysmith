@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+body {
+  @apply bg-transparent m-0 p-0 overflow-x-hidden select-none;
+  color: var(--vscode-foreground);
+  font-family: var(--vscode-font-family);
+}
+.status {
+  font-size: 11px;
+  margin-top: 6px;
+}
+
+.status.success {
+  color: var(--vscode-testing-iconPassed);
+}
+
+.status.error {
+  color: var(--vscode-errorForeground);
+}
