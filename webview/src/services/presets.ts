@@ -13,6 +13,10 @@ const PRESETS: Record<string, PresetConfig> = {
     id: "jwt",
     label: "JWT",
     icon: jwt,
+    iconSize: {
+        width: 14,
+        height: 14
+    },
     color: "bg-blue-800",
     hoverColor: "hover:bg-blue-600",
     successMessage: "JWT Secret created successfully",
@@ -27,6 +31,10 @@ const PRESETS: Record<string, PresetConfig> = {
     label: "Cookie",
     icon: cookie,
     color: "bg-emerald-800",
+    iconSize: {
+        width: 14,
+        height: 14
+    },
     hoverColor: "hover:bg-emerald-600",
     successMessage: "Cookie Secret created successfully",
     message: {
@@ -40,6 +48,10 @@ const PRESETS: Record<string, PresetConfig> = {
     label: "API",
     icon: api,
     color: "bg-red-800",
+    iconSize: {
+        width: 14,
+        height: 14
+    },
     hoverColor: "hover:bg-red-600",
     successMessage: "API Secret created successfully",
     message: {
@@ -53,6 +65,10 @@ const PRESETS: Record<string, PresetConfig> = {
     label: "UUID",
     icon: uuid,
     color: "bg-purple-800",
+    iconSize: {
+        width: 14,
+        height: 14
+    },
     hoverColor: "hover:bg-purple-600",
     successMessage: "UUID created successfully",
     message: {

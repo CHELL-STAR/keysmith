@@ -1,4 +1,3 @@
-import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import { vscode } from "../hooks/global.hook";
 import { PresetService } from "../services/presets";
 import { validatePreset } from "../utils/validation";
@@ -43,25 +42,31 @@ const Presets = ({ notification }: Props) => {
   };
 
   return (
-    <div className="my-2">
-      <label>Presets</label>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+    <div className="mb-6">
+      <h3 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
+        Presets
+      </h3>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {PresetService.getAll().map((preset) => (
-          <VSCodeButton
+          <button
             key={preset.id}
-            appearance="primary"
-            className={`${preset.color} text-white rounded-lg ${preset.hoverColor} transition-all duration-300`}
             onClick={() => generatePreset(preset.id)}
+            className={`group relative overflow-hidden px-2 py-1.5 rounded-lg font-medium text-xs transition-all duration-300 flex items-center justify-center gap-2
+              ${preset.color} hover:${preset.hoverColor} 
+              hover:shadow-lg hover:-translate-y-0.5
+              border border-transparent hover:border-white/20
+              active:translate-y-px
+            `}
           >
             <img
               src={preset.icon}
               alt={preset.label}
-              className="invert-100 opacity-70 mr-2"
-              width={14}
-              height={14}
+              width={preset.iconSize.width}
+              height={preset.iconSize.height}
+              className="invert opacity-80 group-hover:opacity-100 transition-opacity"
             />
-            {preset.label}
-          </VSCodeButton>
+            <span className="text-white font-medium">{preset.label}</span>
+          </button>
         ))}
       </div>
     </div>

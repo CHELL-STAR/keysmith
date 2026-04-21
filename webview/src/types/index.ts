@@ -38,6 +38,10 @@ export interface PresetConfig {
   hoverColor: string;
   successMessage: string;
   message: GenerateMessage | UUIDMessage;
+  iconSize: {
+    width: number
+    height: number
+  }
 }
 
 /**
