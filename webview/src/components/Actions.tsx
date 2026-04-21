@@ -1,5 +1,7 @@
 import { vscode } from "../hooks/global.hook";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
+import refresh from "../assets/images/refresh.svg";
+import copyimg from "../assets/images/copy.svg";
 
 type Props = {
   length: string;
@@ -9,7 +11,13 @@ type Props = {
   setIsError: (val: boolean) => void;
 };
 
-export default function Actions({ length, format, output, setIsError, setMessage }: Props) {
+export default function Actions({
+  length,
+  format,
+  output,
+  setIsError,
+  setMessage,
+}: Props) {
   const generate = () => {
     const num = Number(length);
     if (!length) {
@@ -41,16 +49,16 @@ export default function Actions({ length, format, output, setIsError, setMessage
   };
 
   const copy = () => {
-  if (!output) {
-    setMessage("Nothing to copy");
-    setIsError(true);
-    return;
-  }
+    if (!output) {
+      setMessage("Nothing to copy");
+      setIsError(true);
+      return;
+    }
 
-  navigator.clipboard.writeText(output);
-  setMessage("Copied to clipboard");
-  setIsError(false);
-};
+    navigator.clipboard.writeText(output);
+    setMessage("Copied to clipboard");
+    setIsError(false);
+  };
 
   const insert = () => {
     if (!output) return;
@@ -61,21 +69,42 @@ export default function Actions({ length, format, output, setIsError, setMessage
   };
 
   return (
-    <div className="grid grid-cols-2 gap-2 mt-2">
-      <VSCodeButton className="col-span-2" onClick={generate}>
+    <div className="flex flex-col gap-2 mt-2">
+      <VSCodeButton
+        className="bg-indigo-600 rounded-lg hover:bg-indigo-500 transition-all duration-300"
+        onClick={generate}
+      >
+        <img
+          src={refresh}
+          alt="Generate Key"
+          className="invert-100 opacity-70 mr-2"
+          width={14}
+          height={14}
+        />
         Generate New Key
-        <span slot="start" className="codicon codicon-sync"></span>
       </VSCodeButton>
 
-      <VSCodeButton appearance="secondary" onClick={copy} disabled={!output}>
-        Copy
-        <span slot="start" className="codicon codicon-copy"></span>
-      </VSCodeButton>
+      <div className="grid grid-cols-2 w-full gap-2">
+        <VSCodeButton appearance="secondary" onClick={copy} disabled={!output}>
+          <img
+            src={copyimg}
+            alt="Generate Key"
+            className="invert-100 opacity-70 mr-2"
+            width={14}
+            height={14}
+          />
+          Copy
+        </VSCodeButton>
 
-      <VSCodeButton appearance="secondary" onClick={insert} disabled={!output}>
-        Insert
-        <span slot="start" className="codicon codicon-edit"></span>
-      </VSCodeButton>
+        <VSCodeButton
+          appearance="secondary"
+          onClick={insert}
+          disabled={!output}
+        >
+          Insert
+          <span slot="start" className="codicon codicon-edit"></span>
+        </VSCodeButton>
+      </div>
     </div>
   );
 }

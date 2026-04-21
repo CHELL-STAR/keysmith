@@ -38,6 +38,16 @@ class KeysmithViewProvider implements vscode.WebviewViewProvider {
         });
       }
 
+      if(message.type === "uuid") {
+        const uuid = crypto.randomUUID();
+
+        webviewView.webview.postMessage({
+          message: "uuid created",
+          type: "result",
+          value: uuid,
+        });
+      }
+
       if (message.type === "insert") {
         const editor = vscode.window.activeTextEditor;
         if (editor) {
@@ -60,7 +70,6 @@ class KeysmithViewProvider implements vscode.WebviewViewProvider {
 
     let html = require("fs").readFileSync(indexPath.fsPath, "utf-8");
 
-    // Replace ALL asset paths properly
     html = html.replace(
       /(src|href)="([^"]+)"/g,
       (match: string, attr: string, path: string) => {
