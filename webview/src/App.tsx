@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Header from "./components/Header";
 import InputSection from "./components/InputSection";
 import Actions from "./components/Actions";
@@ -7,32 +7,20 @@ import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import clockface from "./assets/images/clockface.svg";
 import tools from "./assets/images/tools.svg";
 import Presets from "./components/Presets";
+import { useNotification } from "./hooks/useNotification";
+import { useMessageListener } from "./hooks/useMessageListener";
 
 export default function App() {
   const [length, setLength] = useState("32");
   const [format, setFormat] = useState("hex");
   const [output, setOutput] = useState("");
-  const [message, setMessage] = useState("");
-  const [isError, setIsError] = useState(false);
   const [quickTab, setQuickTab] = useState(true);
 
-  useEffect(() => {
-    window.addEventListener("message", (event) => {
-      if (event.data.type === "result") {
-        setOutput(event.data.value);
-      }
-    });
-  }, []);
+  // Use notification hook for centralized message/error state
+  const notification = useNotification();
 
-  useEffect(() => {
-    if (!message) return;
-
-    const timer = setTimeout(() => {
-      setMessage("");
-    }, 3000);
-
-    return () => clearTimeout(timer);
-  }, [message]);
+  // Setup message listener for webview messages from extension
+  useMessageListener(setOutput);
 
   return (
     <div className="container p-2">
@@ -69,7 +57,7 @@ export default function App() {
       </div>
       {quickTab ? (
         <>
-          <Presets setMessage={setMessage} setError={setIsError} />
+          <Presets notification={notification} />
           <InputSection
             length={length}
             setLength={setLength}
@@ -80,8 +68,7 @@ export default function App() {
             length={length}
             format={format}
             output={output}
-            setMessage={setMessage}
-            setIsError={setIsError}
+            notification={notification}
           />
         </>
       ) : (
@@ -89,10 +76,10 @@ export default function App() {
           Custom Tab. In Development!
         </p>
       )}
-      <Output output={output} setIsError={setIsError} setMessage={setMessage} />
-      {message && (
-        <div className={`status ${isError ? "error" : "success"}`}>
-          {message}
+      <Output output={output} notification={notification} />
+      {notification.message && (
+        <div className={`status ${notification.isError ? "error" : "success"}`}>
+          {notification.message}
         </div>
       )}
     </div>

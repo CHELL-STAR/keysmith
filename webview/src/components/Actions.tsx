@@ -1,5 +1,8 @@
+import type { GenerateMessage } from "../types";
 import { vscode } from "../hooks/global.hook";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
+import { validateLength, validateOutput } from "../utils/validation";
+import { copyWithFeedback } from "../utils/clipboard";
 import refresh from "../assets/images/refresh.svg";
 import copyimg from "../assets/images/copy.svg";
 
@@ -7,65 +10,81 @@ type Props = {
   length: string;
   format: string;
   output: string;
-  setMessage: (msg: string) => void;
-  setIsError: (val: boolean) => void;
+  notification: {
+    showSuccess: (msg: string) => void;
+    showError: (msg: string) => void;
+  };
 };
 
+/**
+ * Actions Component
+ * Single Responsibility: Handles user actions for generating, copying, and inserting secrets
+ * Uses utility functions for validation and clipboard operations (DRY principle)
+ */
 export default function Actions({
   length,
   format,
   output,
-  setIsError,
-  setMessage,
+  notification,
 }: Props) {
+  /**
+   * Generate new secret
+   */
   const generate = () => {
-    const num = Number(length);
-    if (!length) {
-      setMessage("Length is required");
-      setIsError(true);
+    // Use validation utility (DRY)
+    const validation = validateLength(length);
+    if (!validation.isValid) {
+      notification.showError(validation.error!);
       return;
     }
 
-    if (isNaN(num)) {
-      setMessage("Length must be a number");
-      setIsError(true);
-      return;
-    }
+    notification.showSuccess("Secret generated successfully");
 
-    if (num < 1 || num > 256) {
-      setMessage("Length must be between 1 and 256");
-      setIsError(true);
-      return;
-    }
-
-    setIsError(false);
-    setMessage("Secret generated successfully");
-
-    vscode.postMessage({
+    const message: GenerateMessage = {
       type: "generate",
-      length: num,
-      format,
-    });
+      length: Number(length),
+      format: format as "hex" | "base64",
+    };
+
+    vscode.postMessage(message);
   };
 
-  const copy = () => {
-    if (!output) {
-      setMessage("Nothing to copy");
-      setIsError(true);
+  /**
+   * Copy output to clipboard
+   */
+  const copy = async () => {
+    // Use validation utility (DRY)
+    const validation = validateOutput(output);
+    if (!validation.isValid) {
+      notification.showError(validation.error!);
       return;
     }
 
-    navigator.clipboard.writeText(output);
-    setMessage("Copied to clipboard");
-    setIsError(false);
+    // Use clipboard utility with feedback
+    const result = await copyWithFeedback(output);
+    if (result.success) {
+      notification.showSuccess(result.message);
+    } else {
+      notification.showError(result.message);
+    }
   };
 
+  /**
+   * Insert output at cursor position
+   */
   const insert = () => {
-    if (!output) return;
+    const validation = validateOutput(output);
+    if (!validation.isValid) {
+      notification.showError(validation.error!);
+      return;
+    }
+
     vscode.postMessage({
       type: "insert",
       value: output,
     });
+
+    notification.showSuccess("Secret inserted successfully");
   };
 
   return (
@@ -96,11 +115,7 @@ export default function Actions({
           Copy
         </VSCodeButton>
 
-        <VSCodeButton
-          appearance="secondary"
-          onClick={insert}
-          disabled={!output}
-        >
+        <VSCodeButton appearance="secondary" onClick={insert} disabled={!output}>
           Insert
           <span slot="start" className="codicon codicon-edit"></span>
         </VSCodeButton>
