@@ -6,6 +6,8 @@
   "engines": {
     "vscode": "^1.116.0"
   },
+  "publisher": "Ankush",
+  "icon": "assets/images/key.png",
   "categories": [
     "Other"
   ],
