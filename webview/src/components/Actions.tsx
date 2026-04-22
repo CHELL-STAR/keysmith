@@ -48,8 +48,6 @@ export default function Actions({
       return;
     }
 
-    notification.showNotification("Secret generated successfully", "success");
-
     const message: GenerateMessage = {
       type: "generate",
       length: Number(length),

@@ -1,9 +1,8 @@
-import type { ExtensionMessage, LevelPreset } from "../types";
+import type { ExtensionMessage } from "../types";
 import { useCallback, useEffect } from "react";
 
 type MessageCallback = {
   onResult?: (value: string)=> void;
-  onNotification?: (message: string, level: LevelPreset)=> void;
 }
 
 /**
@@ -13,7 +12,7 @@ type MessageCallback = {
 export function useMessageListener(
   callbacks: MessageCallback
 ): void {
-  const { onResult, onNotification } = callbacks;
+  const { onResult } = callbacks;
 
   const handleMessage = useCallback((event: MessageEvent<ExtensionMessage>)=> {
     const {data} = event;
@@ -22,12 +21,8 @@ export function useMessageListener(
       onResult(data.value);
     }
 
-    if(data.type === "notification" && onNotification) {
-      onNotification(data.message, data.level);
-    }
 
-
-  }, [onResult, onNotification])
+  }, [onResult])
 
   useEffect(()=> {
     window.addEventListener("message", handleMessage as EventListener);

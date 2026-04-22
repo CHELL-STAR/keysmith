@@ -1,11 +1,6 @@
 import * as vscode from "vscode";
 import * as crypto from "crypto";
-import {
-  VSCodeMessage,
-  ResultMessage,
-  NotificationMessage,
-  LevelPreset,
-} from "../types";
+import { VSCodeMessage, ResultMessage } from "../types";
 
 /**
  * Service for handling messages from the webview
@@ -35,20 +30,6 @@ export class MessageHandler {
     }
   }
 
-  private static sendNotification(
-    webview: vscode.Webview,
-    message: string,
-    level: LevelPreset,
-  ): void {
-    const notification: NotificationMessage = {
-      type: "notification",
-      message,
-      level,
-    };
-
-    webview.postMessage(notification);
-  }
-
   /**
    * Handle generate message - create a random secret
    */
@@ -65,18 +46,7 @@ export class MessageHandler {
     try {
       if (shaFormats.includes(message.format)) {
         if (!message.value || message.value.trim() === "") {
-          const response: ResultMessage = {
-            type: "result",
-            value: "",
-            success: false,
-            message: "Please provide a value to hash.",
-          };
-          webview.postMessage(response);
-          this.sendNotification(
-            webview,
-            "No value provided for hashing.",
-            "error",
-          );
+          vscode.window.showErrorMessage("No value provided for hashing");
           return;
         }
         const hash = crypto
@@ -92,11 +62,7 @@ export class MessageHandler {
         };
 
         webview.postMessage(response);
-        this.sendNotification(
-          webview,
-          "Hash generated successfully.",
-          "success",
-        );
+        vscode.window.showInformationMessage("Hash generated successfully");
         return;
       }
 
@@ -108,14 +74,10 @@ export class MessageHandler {
         type: "result",
         value: secret,
         success: true,
-        message: "Secret generated successfully.",
+        message: "Secret generated successfully!.",
       };
 
-      this.sendNotification(
-        webview,
-        "Secret generated successfully.",
-        "success",
-      );
+      vscode.window.showInformationMessage("Secret generated successfully");
 
       webview.postMessage(response);
     } catch (error) {
@@ -127,7 +89,8 @@ export class MessageHandler {
         message: "An error occurred while generating the secret.",
       };
       webview.postMessage(response);
-      this.sendNotification(webview, "Failed to generate secret.", "error");
+      // this.sendNotification(webview, "Failed to generate secret.", "error");
+      vscode.window.showInformationMessage("Failed to generate secret.");
     }
   }
 
@@ -146,7 +109,7 @@ export class MessageHandler {
       };
 
       webview.postMessage(response);
-      this.sendNotification(webview, "UUID generated successfully.", "success");
+      vscode.window.showInformationMessage("UUID generated successfully.");
     } catch (error) {
       console.error("Error generating UUID:", error);
       const response: ResultMessage = {
@@ -156,7 +119,7 @@ export class MessageHandler {
         message: "An error occurred while generating the UUID.",
       };
       webview.postMessage(response);
-      this.sendNotification(webview, "Failed to generate UUID.", "error");
+      vscode.window.showErrorMessage("Failed to generate UUID.");
     }
   }
 

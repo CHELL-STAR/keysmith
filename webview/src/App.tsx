@@ -24,7 +24,6 @@ export default function App() {
   // Setup message listener for webview messages from extension
   useMessageListener({
     onResult: setOutput,
-    onNotification: notification.showNotification
   });
 
   return (
@@ -74,7 +73,7 @@ export default function App() {
         {/* Notification Toast */}
         {notification.message && (
           <div
-            className={`fixed bottom-4 left-4 right-4 px-4 py-3 rounded-lg font-medium text-sm flex items-center gap-2 animate-in fade-in slide-in-from-bottom-4 duration-300 ${
+            className={`fixed bottom-4 left-4 right-4 px-4 py-3 rounded-lg text-xs flex items-center gap-2 animate-in fade-in slide-in-from-bottom-4 duration-300 ${
               notification.isError
                 ? "bg-red-800 text-white border border-red-600/50"
                 : "bg-emerald-800 text-white border border-emerald-600/50"

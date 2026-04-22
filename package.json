@@ -17,7 +17,39 @@
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
-    "commands": [],
+    "commands": [
+      {
+        "command": "keysmith.refresh",
+        "title": "Refresh"
+      },
+      {
+        "command": "keysmith.clear",
+        "title": "Clear Output"
+      },
+      {
+        "command": "keysmith.about",
+        "title": "About"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "keysmith.refresh",
+          "when": "view == keysmithView",
+          "group": "secondary"
+        },
+        {
+          "command": "keysmith.clear",
+          "when": "view == keysmithView",
+          "group": "secondary"
+        },
+        {
+          "command": "keysmith.about",
+          "when": "view == keysmithView",
+          "group": "secondary"
+        }
+      ]
+    },
     "viewsContainers": {
       "activitybar": [
         {

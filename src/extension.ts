@@ -9,7 +9,27 @@ export function activate(context: vscode.ExtensionContext) {
   const provider = new KeysmithViewProvider(context);
 
   context.subscriptions.push(
-    vscode.window.registerWebviewViewProvider("keysmithView", provider)
+    vscode.commands.registerCommand("keysmith.refresh", () => {
+      vscode.window.showInformationMessage("Refreshed!");
+    }),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("keysmith.clear", () => {
+      vscode.window.showInformationMessage("Cleared!");
+    }),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("keysmith.about", () => {
+      vscode.window.showInformationMessage(
+        "Hey I am Keysmith! Your personal Key generator",
+      );
+    }),
+  );
+
+  context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider("keysmithView", provider),
   );
 }
 
@@ -26,18 +46,18 @@ class KeysmithViewProvider implements vscode.WebviewViewProvider {
   resolveWebviewView(
     webviewView: vscode.WebviewView,
     context: vscode.WebviewViewResolveContext,
-    token: vscode.CancellationToken
+    token: vscode.CancellationToken,
   ): void {
     // Configure webview (delegated to service)
     WebviewConfigService.configureWebview(
       webviewView.webview,
-      this.context.extensionUri
+      this.context.extensionUri,
     );
 
     // Load HTML (delegated to service)
     webviewView.webview.html = WebviewConfigService.getHtml(
       webviewView.webview,
-      this.context.extensionUri
+      this.context.extensionUri,
     );
 
     // Setup message handler
@@ -53,7 +73,7 @@ class KeysmithViewProvider implements vscode.WebviewViewProvider {
       MessageHandler.handle(
         message,
         webviewView.webview,
-        vscode.window.activeTextEditor
+        vscode.window.activeTextEditor,
       );
     });
 
