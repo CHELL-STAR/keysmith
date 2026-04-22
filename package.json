@@ -2,13 +2,16 @@
   "name": "keysmith",
   "displayName": "keysmith",
   "description": "Generate secure secrets, API keys, and tokens directly inside VS Code.",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "engines": {
     "vscode": "^1.116.0"
   },
   "categories": [
     "Other"
   ],
+  "repository": {
+    "url": "https://github.com/CHELL-STAR/keysmith.git"
+  },
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
@@ -39,11 +42,12 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "build:webview": "cd webview && npm run build",
+    "build:ext": "tsc -p ./",
+    "build": "npm run build:webview && npm run build:ext"
   },
   "devDependencies": {
-    "@types/jest": "^30.0.0",
-    "@types/mocha": "^10.0.10",
     "@types/node": "^22.19.17",
     "@types/vscode": "^1.116.0",
     "@vscode/test-cli": "^0.0.12",
@@ -51,8 +55,5 @@
     "eslint": "^9.39.3",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.56.1"
-  },
-  "dependencies": {
-    "@vscode/webview-ui-toolkit": "^1.4.0"
   }
 }
