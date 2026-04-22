@@ -1,4 +1,4 @@
-import type { GenerateMessage } from "../types";
+import type { GenerateMessage, LevelPreset } from "../types";
 import { vscode } from "../hooks/global.hook";
 import { validateLength, validateOutput } from "../utils/validation";
 import { copyWithFeedback } from "../utils/clipboard";
@@ -9,11 +9,21 @@ type Props = {
   length: string;
   format: string;
   output: string;
+  value?: string;
   notification: {
-    showSuccess: (msg: string) => void;
-    showError: (msg: string) => void;
+    showNotification: (
+      message: string,
+      level: LevelPreset,
+    ) => void;
   };
 };
+
+enum Formats {
+  hex = "hex",
+  base64 = "base64",
+  sha256 = "sha256",
+  sha512 = "sha512"
+}
 
 /**
  * Actions Component
@@ -25,6 +35,7 @@ export default function Actions({
   format,
   output,
   notification,
+  value,
 }: Props) {
   /**
    * Generate new secret
@@ -33,16 +44,17 @@ export default function Actions({
     // Use validation utility (DRY)
     const validation = validateLength(length);
     if (!validation.isValid) {
-      notification.showError(validation.error!);
+      notification.showNotification(validation.error!, "error");
       return;
     }
 
-    notification.showSuccess("Secret generated successfully");
+    notification.showNotification("Secret generated successfully", "success");
 
     const message: GenerateMessage = {
       type: "generate",
       length: Number(length),
-      format: format as "hex" | "base64",
+      format: format as Formats,
+      value,
     };
 
     vscode.postMessage(message);
@@ -55,16 +67,16 @@ export default function Actions({
     // Use validation utility (DRY)
     const validation = validateOutput(output);
     if (!validation.isValid) {
-      notification.showError(validation.error!);
+      notification.showNotification(validation.error!, "error");
       return;
     }
 
     // Use clipboard utility with feedback
     const result = await copyWithFeedback(output);
     if (result.success) {
-      notification.showSuccess(result.message);
+      notification.showNotification(result.message, "success");
     } else {
-      notification.showError(result.message);
+      notification.showNotification(result.message, "error");
     }
   };
 
@@ -74,7 +86,7 @@ export default function Actions({
   const insert = () => {
     const validation = validateOutput(output);
     if (!validation.isValid) {
-      notification.showError(validation.error!);
+      notification.showNotification(validation.error!, "error");
       return;
     }
 
@@ -82,8 +94,6 @@ export default function Actions({
       type: "insert",
       value: output,
     });
-
-    notification.showSuccess("Secret inserted successfully");
   };
 
   return (

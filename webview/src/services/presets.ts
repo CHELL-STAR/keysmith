@@ -14,8 +14,8 @@ const PRESETS: Record<string, PresetConfig> = {
     label: "JWT",
     icon: jwt,
     iconSize: {
-        width: 14,
-        height: 14
+        width: 12,
+        height: 12
     },
     color: "bg-blue-800",
     hoverColor: "hover:bg-blue-600",

@@ -1,6 +1,11 @@
 import * as vscode from "vscode";
 import * as crypto from "crypto";
-import { VSCodeMessage, ResultMessage } from "../types";
+import {
+  VSCodeMessage,
+  ResultMessage,
+  NotificationMessage,
+  LevelPreset,
+} from "../types";
 
 /**
  * Service for handling messages from the webview
@@ -30,14 +35,71 @@ export class MessageHandler {
     }
   }
 
+  private static sendNotification(
+    webview: vscode.Webview,
+    message: string,
+    level: LevelPreset,
+  ): void {
+    const notification: NotificationMessage = {
+      type: "notification",
+      message,
+      level,
+    };
+
+    webview.postMessage(notification);
+  }
+
   /**
    * Handle generate message - create a random secret
    */
   private static handleGenerate(
-    message: { type: "generate"; length: number; format: string },
+    message: {
+      type: "generate";
+      length: number;
+      format: string;
+      value?: string;
+    },
     webview: vscode.Webview,
   ): void {
+    const shaFormats = ["sha256", "sha512", "sha384", "sha224", "sha1"];
     try {
+      if (shaFormats.includes(message.format)) {
+        if (!message.value || message.value.trim() === "") {
+          const response: ResultMessage = {
+            type: "result",
+            value: "",
+            success: false,
+            message: "Please provide a value to hash.",
+          };
+          webview.postMessage(response);
+          this.sendNotification(
+            webview,
+            "No value provided for hashing.",
+            "error",
+          );
+          return;
+        }
+        const hash = crypto
+          .createHash(message.format)
+          .update(message.value)
+          .digest("hex");
+
+        const response: ResultMessage = {
+          type: "result",
+          value: hash,
+          success: true,
+          message: "Hash generated successfully.",
+        };
+
+        webview.postMessage(response);
+        this.sendNotification(
+          webview,
+          "Hash generated successfully.",
+          "success",
+        );
+        return;
+      }
+
       const secret = crypto
         .randomBytes(message.length)
         .toString(message.format as BufferEncoding);
@@ -45,8 +107,15 @@ export class MessageHandler {
       const response: ResultMessage = {
         type: "result",
         value: secret,
-        message: "Secret generated successfully",
+        success: true,
+        message: "Secret generated successfully.",
       };
+
+      this.sendNotification(
+        webview,
+        "Secret generated successfully.",
+        "success",
+      );
 
       webview.postMessage(response);
     } catch (error) {
@@ -54,9 +123,11 @@ export class MessageHandler {
       const response: ResultMessage = {
         type: "result",
         value: "",
-        message: "Error generating secret",
+        success: false,
+        message: "An error occurred while generating the secret.",
       };
       webview.postMessage(response);
+      this.sendNotification(webview, "Failed to generate secret.", "error");
     }
   }
 
@@ -70,18 +141,22 @@ export class MessageHandler {
       const response: ResultMessage = {
         type: "result",
         value: uuid,
-        message: "UUID created successfully",
+        success: true,
+        message: "UUID generated successfully.",
       };
 
       webview.postMessage(response);
+      this.sendNotification(webview, "UUID generated successfully.", "success");
     } catch (error) {
       console.error("Error generating UUID:", error);
       const response: ResultMessage = {
         type: "result",
         value: "",
-        message: "Error generating UUID",
+        success: false,
+        message: "An error occurred while generating the UUID.",
       };
       webview.postMessage(response);
+      this.sendNotification(webview, "Failed to generate UUID.", "error");
     }
   }
 
@@ -93,7 +168,7 @@ export class MessageHandler {
     editor?: vscode.TextEditor,
   ): void {
     if (!editor) {
-      console.warn("No active editor to insert text");
+      console.warn("No active editor found to insert text.");
       return;
     }
 

@@ -1,10 +1,12 @@
 /**
  * Message types sent from webview to extension
  */
+
 export interface GenerateMessage {
   type: "generate";
   length: number;
-  format: "hex" | "base64";
+  format: "hex" | "base64" | "sha256" | "sha512";
+  value?: string;
 }
 
 export interface UUIDMessage {
@@ -16,6 +18,8 @@ export interface InsertMessage {
   value: string;
 }
 
+export type LevelPreset = "success" | "error" | "info" | "warning";
+
 export type VSCodeMessage = GenerateMessage | UUIDMessage | InsertMessage;
 
 /**
@@ -24,8 +28,18 @@ export type VSCodeMessage = GenerateMessage | UUIDMessage | InsertMessage;
 export interface ResultMessage {
   type: "result";
   value: string;
+  success: boolean;
   message?: string;
 }
+
+export interface NotificationMessage {
+  type: "notification",
+  message: string;
+  level: LevelPreset
+}
+
+
+export type ExtensionMessage = ResultMessage | NotificationMessage;
 
 /**
  * Preset configuration
@@ -49,7 +63,8 @@ export interface PresetConfig {
  */
 export interface NotificationState {
   message: string;
-  isError: boolean;
+  level: LevelPreset,
+  isError?: boolean;
 }
 
 /**

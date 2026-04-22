@@ -3,25 +3,29 @@ import Header from "./components/Header";
 import InputSection from "./components/InputSection";
 import Actions from "./components/Actions";
 import Output from "./components/Output";
-import clockface from "./assets/images/clockface.svg";
-import tools from "./assets/images/tools.svg";
+
 import Presets from "./components/Presets";
 import { useNotification } from "./hooks/useNotification";
 import { useMessageListener } from "./hooks/useMessageListener";
 import error from "./assets/images/error.svg";
 import success from "./assets/images/pass.svg";
+import { MainTabOptions } from "./components/Tabs";
 
 export default function App() {
   const [length, setLength] = useState("32");
   const [format, setFormat] = useState("hex");
   const [output, setOutput] = useState("");
   const [quickTab, setQuickTab] = useState(true);
+  const [hashvalue, setHashValue] = useState("");
 
   // Use notification hook for centralized message/error state
   const notification = useNotification();
 
   // Setup message listener for webview messages from extension
-  useMessageListener(setOutput);
+  useMessageListener({
+    onResult: setOutput,
+    onNotification: notification.showNotification
+  });
 
   return (
     <div className="min-h-screen">
@@ -30,58 +34,27 @@ export default function App() {
         <Header />
 
         {/* Tab Navigation */}
-        <div className="flex gap-2 mb-6 rounded-lg p-1 border border-slate-600/30 backdrop-blur-sm">
-          <button
-            onClick={() => setQuickTab(true)}
-            className={`flex-1 px-2 py-1.5 rounded-md font-medium text-xs transition-all duration-300 flex items-center justify-center gap-2
-              ${
-                quickTab
-                  ? "bg-emerald-700 text-white shadow-lg shadow-white/30"
-                  : "text-slate-400 hover:text-slate-300"
-              }
-            `}
-          >
-            <img
-              src={clockface}
-              alt="Quick"
-              className={`w-3 h-3 ${quickTab ? "invert" : "invert opacity-70"}`}
-            />
-            Quick
-          </button>
-          <button
-            onClick={() => setQuickTab(false)}
-            className={`flex-1 px-2 py-1.5 rounded-md font-medium text-xs transition-all duration-300 flex items-center justify-center gap-2
-              ${
-                !quickTab
-                  ? "bg-emerald-700 text-white shadow-lg shadow-white/30"
-                  : "text-slate-400 hover:text-slate-300"
-              }
-            `}
-          >
-            <img
-              src={tools}
-              alt="Custom"
-              className={`w-3 h-3 ${!quickTab ? "invert" : "invert opacity-70"}`}
-            />
-            Custom
-          </button>
-        </div>
+        <MainTabOptions quickTab={quickTab} setQuickTab={setQuickTab} />
 
         {/* Tab Content */}
         {quickTab ? (
           <div className="space-y-4">
             <Presets notification={notification} />
+
             <InputSection
               length={length}
               setLength={setLength}
               format={format}
               setFormat={setFormat}
+              setValue={setHashValue}
+              value={hashvalue}
             />
             <Actions
               length={length}
               format={format}
               output={output}
               notification={notification}
+              value={hashvalue}
             />
           </div>
         ) : (

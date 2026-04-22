@@ -1,36 +1,29 @@
-import type { NotificationState } from "../types";
 import { useEffect, useState, useCallback } from "react";
+import type { LevelPreset } from "../types";
 
+export interface NotificationState {
+  message: string;
+  level: LevelPreset;
+}
 const NOTIFICATION_DURATION = 3000; // 3 seconds
 
 /**
  * Custom hook for managing notification state
  * Encapsulates message and error handling with auto-clear functionality
  * @param duration - Duration in ms to show notification (default: 3000)
- * @returns Notification state and setter functions
  */
 export function useNotification(duration: number = NOTIFICATION_DURATION) {
   const [notification, setNotification] = useState<NotificationState>({
     message: "",
-    isError: false,
+    level: "success",
   });
 
   /**
    * Sets a success message that auto-clears after duration
    */
-  const showSuccess = useCallback(
-    (message: string) => {
-      setNotification({ message, isError: false });
-    },
-    []
-  );
-
-  /**
-   * Sets an error message that auto-clears after duration
-   */
-  const showError = useCallback(
-    (message: string) => {
-      setNotification({ message, isError: true });
+  const showNotification = useCallback(
+    (message: string, level: LevelPreset) => {
+      setNotification({ message, level });
     },
     []
   );
@@ -39,10 +32,9 @@ export function useNotification(duration: number = NOTIFICATION_DURATION) {
    * Clears the notification immediately
    */
   const clear = useCallback(() => {
-    setNotification({ message: "", isError: false });
+    setNotification({ message: "", level: "success" });
   }, []);
 
-  // Auto-clear notification after duration
   useEffect(() => {
     if (!notification.message) return;
 
@@ -55,8 +47,8 @@ export function useNotification(duration: number = NOTIFICATION_DURATION) {
 
   return {
     ...notification,
-    showSuccess,
-    showError,
+    showNotification,
     clear,
+    isError: notification.level === "error"
   };
 }

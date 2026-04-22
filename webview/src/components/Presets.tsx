@@ -1,11 +1,14 @@
 import { vscode } from "../hooks/global.hook";
 import { PresetService } from "../services/presets";
+import type { LevelPreset } from "../types";
 import { validatePreset } from "../utils/validation";
 
 type Props = {
   notification: {
-    showSuccess: (msg: string) => void;
-    showError: (msg: string) => void;
+    showNotification: (
+      message: string,
+      level: LevelPreset,
+    ) => void;
   };
 };
 
@@ -23,22 +26,19 @@ const Presets = ({ notification }: Props) => {
     // Validate preset
     const validation = validatePreset(presetId);
     if (!validation.isValid) {
-      notification.showError(validation.error!);
+      notification.showNotification(validation.error!, "error");
       return;
     }
 
     // Get preset configuration from service (OCP: easy to add new presets)
     const preset = PresetService.getById(presetId);
     if (!preset) {
-      notification.showError("Preset not found");
+      notification.showNotification("Preset not found", "error");
       return;
     }
 
     // Send message to extension
     vscode.postMessage(preset.message);
-
-    // Show success message
-    notification.showSuccess(preset.successMessage);
   };
 
   return (

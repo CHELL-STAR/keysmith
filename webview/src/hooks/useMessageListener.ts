@@ -1,24 +1,39 @@
-import type { ResultMessage } from "../types";
-import { useEffect } from "react";
+import type { ExtensionMessage, LevelPreset } from "../types";
+import { useCallback, useEffect } from "react";
+
+type MessageCallback = {
+  onResult?: (value: string)=> void;
+  onNotification?: (message: string, level: LevelPreset)=> void;
+}
 
 /**
  * Custom hook for listening to messages from VS Code extension
  * @param onMessage - Callback when result message is received
  */
 export function useMessageListener(
-  onMessage: (value: string) => void
+  callbacks: MessageCallback
 ): void {
-  useEffect(() => {
-    const handleMessage = (event: MessageEvent<ResultMessage>) => {
-      if (event.data.type === "result") {
-        onMessage(event.data.value);
-      }
-    };
+  const { onResult, onNotification } = callbacks;
 
-    window.addEventListener("message", handleMessage);
+  const handleMessage = useCallback((event: MessageEvent<ExtensionMessage>)=> {
+    const {data} = event;
 
-    return () => {
-      window.removeEventListener("message", handleMessage);
-    };
-  }, [onMessage]);
+    if(data.type === "result" && onResult) {
+      onResult(data.value);
+    }
+
+    if(data.type === "notification" && onNotification) {
+      onNotification(data.message, data.level);
+    }
+
+
+  }, [onResult, onNotification])
+
+  useEffect(()=> {
+    window.addEventListener("message", handleMessage as EventListener);
+
+    return()=> {
+      window.removeEventListener('message', handleMessage as EventListener)
+    }
+  }, [handleMessage])
 }

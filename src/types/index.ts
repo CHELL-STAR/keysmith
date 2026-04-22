@@ -5,12 +5,15 @@
 export interface GenerateMessage {
   type: "generate";
   length: number;
-  format: "hex" | "base64";
+  format: "hex" | "base64" | "sha256" | "sha512";
+  value?: string;
 }
 
 export interface UUIDMessage {
   type: "uuid";
 }
+
+export type LevelPreset = "success" | "error" | "warning" | "info"
 
 export interface InsertMessage {
   type: "insert";
@@ -25,5 +28,14 @@ export type VSCodeMessage = GenerateMessage | UUIDMessage | InsertMessage;
 export interface ResultMessage {
   type: "result";
   value: string;
+  success: boolean;
   message?: string;
 }
+
+export interface NotificationMessage {
+  type: "notification",
+  message: string;
+  level: LevelPreset
+}
+
+export type ExtensionToWebviewMessage = ResultMessage | NotificationMessage;

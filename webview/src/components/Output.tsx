@@ -1,12 +1,15 @@
 import { copyWithFeedback } from "../utils/clipboard";
 import { validateOutput } from "../utils/validation";
 import lock from "../assets/images/lock.svg";
+import type { LevelPreset } from "../types";
 
 type Props = {
   output: string;
   notification: {
-    showSuccess: (msg: string) => void;
-    showError: (msg: string) => void;
+    showNotification: (
+      message: string,
+      level: LevelPreset,
+    ) => void;
   };
 };
 
@@ -22,15 +25,15 @@ export default function Output({ output, notification }: Props) {
   const copyOnClick = async () => {
     const validation = validateOutput(output);
     if (!validation.isValid) {
-      notification.showError(validation.error!);
+      notification.showNotification(validation.error!, "error");
       return;
     }
 
     const result = await copyWithFeedback(output);
     if (result.success) {
-      notification.showSuccess(result.message);
+      notification.showNotification(result.message, "success");
     } else {
-      notification.showError(result.message);
+      notification.showNotification(result.message, "error");
     }
   };
 
