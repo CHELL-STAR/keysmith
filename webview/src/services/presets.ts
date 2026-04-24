@@ -1,8 +1,4 @@
 import type { PresetConfig } from "../types";
-import jwt from "../assets/images/jsonwebtokens.svg";
-import api from "../assets/images/api-settings.svg";
-import cookie from "../assets/images/cookie.svg";
-import uuid from "../assets/images/uuid-backfill.svg";
 
 /**
  * Preset configurations
@@ -12,7 +8,7 @@ const PRESETS: Record<string, PresetConfig> = {
   jwt: {
     id: "jwt",
     label: "JWT",
-    icon: jwt,
+    icon: "codicon-type-hierarchy-sub",
     iconSize: {
         width: 12,
         height: 12
@@ -29,7 +25,7 @@ const PRESETS: Record<string, PresetConfig> = {
   cookie: {
     id: "cookie",
     label: "Cookie",
-    icon: cookie,
+    icon: "codicon-globe",
     color: "bg-emerald-800",
     iconSize: {
         width: 14,
@@ -46,7 +42,7 @@ const PRESETS: Record<string, PresetConfig> = {
   api: {
     id: "api",
     label: "API",
-    icon: api,
+    icon: "codicon-key",
     color: "bg-red-800",
     iconSize: {
         width: 14,
@@ -63,7 +59,7 @@ const PRESETS: Record<string, PresetConfig> = {
   uuid: {
     id: "uuid",
     label: "UUID",
-    icon: uuid,
+    icon: "codicon-flame",
     color: "bg-purple-800",
     iconSize: {
         width: 14,

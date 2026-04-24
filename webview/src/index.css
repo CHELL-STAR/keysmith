@@ -3,10 +3,39 @@
 @layer base {
   body {
     @apply bg-transparent m-0 p-0 overflow-x-hidden;
+    background: var(--vscode-background);
     color: var(--vscode-foreground);
     font-family: var(--vscode-font-family);
   }
 
+  button {
+    background: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+  }
+  .preset {
+    background: var(--vscode-button-secondaryBackground);
+    color: var(--vscode-button-secondaryForeground);
+    border: 1px solid var(--vscode-panel-border);
+    transition: 0.2s;
+  }
+
+  .preset:hover {
+    background: var(--vscode-list-hoverBackground);
+  }
+
+  .preset.active {
+    background: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+  }
+  .card {
+    background: var(--vscode-editorWidget-background);
+  }
+  button:hover {
+    background: var(--vscode-button-hoverBackground);
+  }
+  .border-native {
+    border-color: var(--vscode-editorWidget-border);
+  }
   * {
     @apply transition-colors duration-300;
   }

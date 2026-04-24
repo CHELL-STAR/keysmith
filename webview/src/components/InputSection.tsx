@@ -40,12 +40,12 @@ export default function InputSection({
       />
 
       {encodeTab ? (
-        <div className="bg-linear-to-br from-slate-800/40 to-slate-700/20 rounded-xl p-4 border border-slate-600/30 backdrop-blur-sm mb-4">
+        <div className="card border-native rounded-xl p-4 border backdrop-blur-sm mb-4">
           <div className="space-y-4">
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-slate-300">
+              <label className="text-sm font-semibold">
                 Key Length
-                <span className="ml-1 text-indigo-400">({length} bytes)</span>
+                <span className="ml-1 text-emerald-500">({length} bytes)</span>
               </label>
               <VSCodeTextField
                 className="w-full"
@@ -54,13 +54,13 @@ export default function InputSection({
                 onInput={(e: FormProps) => setLength(e.target.value)}
                 placeholder="Enter key length (1-256)"
               />
-              <p className="text-[10px] text-slate-400">
+              <p className="text-[10px]">
                 Length of the generated secret in bytes
               </p>
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-slate-300">
+              <label className="text-sm font-semibold">
                 Encoding Format
               </label>
               <VSCodeDropdown
@@ -72,7 +72,7 @@ export default function InputSection({
                 <VSCodeOption value="hex">🔷 Hexadecimal</VSCodeOption>
                 <VSCodeOption value="base64">🔶 Base64</VSCodeOption>
               </VSCodeDropdown>
-              <p className="text-[10px] text-slate-400">
+              <p className="text-[10px]">
                 {format === "hex"
                   ? "Hexadecimal format: 0-9, A-F"
                   : "Base64 format: A-Z, a-z, 0-9, +, /"}
@@ -81,10 +81,10 @@ export default function InputSection({
           </div>
         </div>
       ) : (
-        <div className="bg-linear-to-br from-slate-800/40 to-slate-700/20 rounded-xl p-4 border border-slate-600/30 backdrop-blur-sm mb-4">
+        <div className="card border-native rounded-xl p-4 border backdrop-blur-sm mb-4">
           <div className="space-y-4">
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-slate-300">
+              <label className="text-sm font-semibold">
                 Value
               </label>
               <VSCodeTextField
@@ -94,13 +94,13 @@ export default function InputSection({
                 onInput={(e: FormProps) => setValue(e.target.value)}
                 placeholder="Enter key length (1-256)"
               />
-              <p className="text-[10px] text-slate-400">
+              <p className="text-[10px]">
                 Value of a string to be hashed in {format}
               </p>
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-slate-300">
+              <label className="text-sm font-semibold">
                 Encoding Format
               </label>
               <VSCodeDropdown
@@ -109,8 +109,6 @@ export default function InputSection({
                 // @ts-expect-error bcz
                 onChange={(e: FormProps) => setFormat(e.target.value)}
               >
-                {/* <VSCodeOption value="sha256">🔷 SHA-256</VSCodeOption>
-                <VSCodeOption value="sha512">🔶 SHA-512</VSCodeOption> */}
                 {SHA_ALGORITHAMS.map((item) => {
                   return (
                     <VSCodeOption value={item.value} key={item.value}>
@@ -119,7 +117,7 @@ export default function InputSection({
                   );
                 })}
               </VSCodeDropdown>
-              {/* <p className="text-[10px] text-slate-400">
+              {/* <p className="text-[10px]">
                 {format === "hex"
                   ? "Hexadecimal format: 0-9, A-F"
                   : "Base64 format: A-Z, a-z, 0-9, +, /"}

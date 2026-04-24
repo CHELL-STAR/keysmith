@@ -1,7 +1,5 @@
-import encode from "../assets/images/encode.svg";
-import hashImg from "../assets/images/hash.svg";
-import clockface from "../assets/images/clockface.svg";
-import tools from "../assets/images/tools.svg";
+import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
+import "@vscode/codicons/dist/codicon.css";
 
 type EncodeHashProps = {
   encodeTab: boolean;
@@ -16,43 +14,36 @@ type MainTabOptionsProps = {
 
 const MainTabOptions = ({ quickTab, setQuickTab }: MainTabOptionsProps) => {
   return (
-    <div className="flex gap-2 mb-6 rounded-lg p-1 border border-slate-600/30 backdrop-blur-sm">
-      <button
-        onClick={() => setQuickTab(true)}
-        className={`flex-1 px-2 py-1.5 rounded-md font-medium text-xs transition-all duration-300 flex items-center justify-center gap-2
-              ${
-                quickTab
-                  ? "bg-white text-black"
-                  : "text-slate-400 hover:text-slate-300"
-              }
+    <>
+      <p className="context">Quick Presets</p>
+      <div className="flex gap-2 mb-6 rounded-lg p-1 border border-native backdrop-blur-sm">
+        <VSCodeButton
+          onClick={() => setQuickTab(true)}
+          // if it is custom tab change it background colour
+          className={`rounded-md w-full text-xs transition-all duration-300
+              ${!quickTab && "bg-(----vscode-button-foreground) text-(------vscode-button-background)"}
               
             `}
-      >
-        <img
-          src={clockface}
-          alt="Quick"
-          className={`w-3 h-3 ${quickTab ? "brightness-100" : "invert opacity-70"}`}
-        />
-        Quick
-      </button>
-      <button
-        onClick={() => setQuickTab(false)}
-        className={`flex-1 px-2 py-1.5 rounded-md font-medium text-xs transition-all duration-300 flex items-center justify-center gap-2
-              ${
-                !quickTab
-                  ? "bg-white text-black"
-                  : "text-slate-400 hover:text-slate-300"
-              }
+        >
+          <span className="w-full flex items-center gap-2">
+            <i className="codicon codicon-clockface"></i>
+            Quick
+          </span>
+        </VSCodeButton>
+        <VSCodeButton
+          onClick={() => setQuickTab(false)}
+          // if its quick tab change it background colour
+          className={`rounded-md w-full text-xs transition-all duration-300
+              ${quickTab && "bg-(----vscode-button-foreground) text-(------vscode-button-background)"}
             `}
-      >
-        <img
-          src={tools}
-          alt="Custom"
-          className={`w-3 h-3 ${!quickTab ? "brightness-100" : "invert opacity-70"}`}
-        />
-        Custom
-      </button>
-    </div>
+        >
+          <span className="w-full flex items-center gap-2">
+            <i className="codicon codicon-tools"></i>
+            Custom
+          </span>
+        </VSCodeButton>
+      </div>
+    </>
   );
 };
 
@@ -62,45 +53,34 @@ const EncodeHash = ({
   setFormat,
 }: EncodeHashProps) => {
   return (
-    <div className="flex gap-2 mb-6 rounded-lg p-1 border border-zinc-600/30 backdrop-blur-sm">
-      <button
+    <div className="flex gap-2 mb-2 rounded-lg p-1 border border-native backdrop-blur-sm">
+      <VSCodeButton
         onClick={() => {
           setEncodeTab(true);
           setFormat("hex");
         }}
-        className={`flex-1 px-2 py-1.5 rounded-md font-medium text-xs transition-all duration-300 flex items-center justify-center gap-2
-      ${encodeTab ? "bg-white text-black" : "text-slate-400 hover:text-slate-300"}`}
+        className={`rounded-md w-full font-medium text-xs transition-all duration-300
+      ${!encodeTab && "bg-(----vscode-button-foreground) text-(------vscode-button-background)"}`}
       >
-        <img
-          src={encode}
-          alt="Encode Tab"
-          /* If encodeTab is true (white bg), we use invert to make the icon dark.
-         If false, we keep it original or slightly dimmed.
-      */
-          className={`w-3 h-3 transition-all duration-300 ${
-            encodeTab ? "brightness-100" : "invert opacity-70"
-          }`}
-        />
-        Encode
-      </button>
+        <span className="w-full flex items-center gap-2">
+          <i className="codicon codicon-symbol-class"></i>
+          Encode
+        </span>
+      </VSCodeButton>
 
-      <button
+      <VSCodeButton
         onClick={() => {
           setEncodeTab(false);
           setFormat("sha256");
         }}
-        className={`flex-1 px-2 py-1.5 rounded-md font-medium text-xs transition-all duration-300 flex items-center justify-center gap-2
-      ${!encodeTab ? "bg-white text-black" : "text-slate-400 hover:text-slate-300"}`}
+        className={`rounded-md w-full font-medium text-xs transition-all duration-300
+      ${encodeTab && "bg-(----vscode-button-foreground) text-(------vscode-button-background)"}`}
       >
-        <img
-          src={hashImg}
-          alt="Hash Tab"
-          className={`w-3 h-3 transition-all duration-300 ${
-            !encodeTab ? "brightness-100" : "invert opacity-70"
-          }`}
-        />
-        Hash
-      </button>
+        <span className="w-full flex items-center gap-2">
+          <i className="codicon codicon-symbol-numeric"></i>
+          Hash
+        </span>
+      </VSCodeButton>
     </div>
   );
 };

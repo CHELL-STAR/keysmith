@@ -1,14 +1,13 @@
+import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import { vscode } from "../hooks/global.hook";
 import { PresetService } from "../services/presets";
 import type { LevelPreset } from "../types";
 import { validatePreset } from "../utils/validation";
+import { useEffect, useRef, useState } from "react";
 
 type Props = {
   notification: {
-    showNotification: (
-      message: string,
-      level: LevelPreset,
-    ) => void;
+    showNotification: (message: string, level: LevelPreset) => void;
   };
 };
 
@@ -37,36 +36,49 @@ const Presets = ({ notification }: Props) => {
       return;
     }
 
+    setActivePreset(preset.id);
+
     // Send message to extension
     vscode.postMessage(preset.message);
   };
 
+  const [activePreset, setActivePreset] = useState<string | null>(null);
+  const presetRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        presetRef.current &&
+        !presetRef.current.contains(event.target as Node)
+      ) {
+        setActivePreset(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div className="mb-6">
-      <h3 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
-        Presets
-      </h3>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+      <p className="context mb-2">Auto Services</p>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2" ref={presetRef}>
         {PresetService.getAll().map((preset) => (
-          <button
+          <VSCodeButton
             key={preset.id}
             onClick={() => generatePreset(preset.id)}
-            className={`group relative overflow-hidden px-2 py-1.5 rounded-lg font-medium text-xs transition-all duration-300 flex items-center justify-center gap-2
-              ${preset.color} hover:${preset.hoverColor} 
-              hover:shadow-lg hover:-translate-y-0.5
-              border border-transparent hover:border-white/20
-              active:translate-y-px
+            className={`group preset w-full relative overflow-hidden rounded-lg font-medium text-xs transition-all duration-300
+             ${activePreset === preset.id && "active"}
             `}
           >
-            <img
-              src={preset.icon}
-              alt={preset.label}
-              width={preset.iconSize.width}
-              height={preset.iconSize.height}
-              className="invert opacity-80 group-hover:opacity-100 transition-opacity"
-            />
-            <span className="text-white font-medium">{preset.label}</span>
-          </button>
+            <span className="w-full flex items-center gap-2">
+              <i className={`codicon ${preset.icon}`} />
+              <span className="font-medium">{preset.label}</span>
+            </span>
+          </VSCodeButton>
         ))}
       </div>
     </div>

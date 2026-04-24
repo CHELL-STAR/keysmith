@@ -1,6 +1,5 @@
 import { copyWithFeedback } from "../utils/clipboard";
 import { validateOutput } from "../utils/validation";
-import lock from "../assets/images/lock.svg";
 import type { LevelPreset } from "../types";
 
 type Props = {
@@ -40,12 +39,8 @@ export default function Output({ output, notification }: Props) {
   return (
     <div className="flex flex-col gap-2.5 mt-6">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-semibold text-slate-300 flex items-center gap-2">
-          <img
-            src={lock}
-            alt={"Results"}
-            className="w-4 h-4 invert opacity-80 group-hover:opacity-100 transition-opacity"
-          />
+        <label className="text-sm font-semibold flex items-center gap-2">
+          <i className="codicon codicon-lock-small"/>
           Generated Result
         </label>
         {output && (
@@ -60,9 +55,9 @@ export default function Output({ output, notification }: Props) {
         `}
       >
         <div className="flex flex-col items-center justify-between">
-          <code className="bg-[#101213] w-full p-2 font-mono text-slate-300 break-all flex-1 select-all text-xs">
+          <code className="w-full p-2 font-mono break-all flex-1 select-all text-xs">
             {output || (
-              <span className="text-slate-500">
+              <span>
                 Your generated secret will appear here...
               </span>
             )}
@@ -75,7 +70,7 @@ export default function Output({ output, notification }: Props) {
         </div>
       </div>
       {output && (
-        <p className="text-[10px] text-slate-400 text-center">
+        <p className="text-[10px] opacity-90 text-center">
           Click to copy to clipboard
         </p>
       )}

@@ -23,3 +23,12 @@ All notable changes to the "keysmith" extension will be documented in this file.
   - SHA-384
   - SHA-224
   - SHA-1
+
+
+### v1.2
+- UI/UX redesign for a cleaner and more consistent experience
+- Improved support for light and dark VS Code themes
+- Switched to Codicons for native icon support
+- Enhanced component spacing and visual hierarchy
+- Improved interaction feedback (buttons, presets, toggles)
+- Code cleanup and minor fixes
